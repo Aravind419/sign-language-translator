@@ -1,0 +1,7 @@
+{
+  "name": "@your-username/translate",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
