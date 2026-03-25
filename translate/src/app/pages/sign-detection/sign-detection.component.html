@@ -1,0 +1,30 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Sign Translator</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="split-layout">
+    <div class="camera-section" style="position: relative;">
+      <video #webcamVideo autoplay playsinline></video>
+      <canvas #outputCanvas></canvas>
+    </div>
+
+    <div class="meaning-section">
+      <div class="meaning-card">
+        <h2>Translation</h2>
+        <div class="meaning-text">
+          {{ detectedMeaning }}
+        </div>
+        <ion-button expand="block" shape="round" color="primary" (click)="speakAloud()">
+          <ion-icon slot="start" name="volume-high"></ion-icon>
+          Speak Aloud
+        </ion-button>
+      </div>
+    </div>
+  </div>
+</ion-content>

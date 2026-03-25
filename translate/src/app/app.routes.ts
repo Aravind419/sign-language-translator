@@ -16,6 +16,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/benchmark/benchmark.component').then(m => m.BenchmarkComponent),
     providers: [{provide: LanguageDetectionService, useClass: MediaPipeLanguageDetectionService}],
   },
+  {
+    path: 'sign-detection',
+    loadComponent: () => import('./pages/sign-detection/sign-detection.component').then(m => m.SignDetectionComponent),
+  },
   {path: 'about', loadChildren: () => import('./pages/landing/landing.routes').then(m => m.routes)},
   {path: 'legal', loadChildren: () => import('./pages/landing/landing.routes').then(m => m.routes)},
   {

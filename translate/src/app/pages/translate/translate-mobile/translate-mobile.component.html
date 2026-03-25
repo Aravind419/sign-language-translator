@@ -2,6 +2,9 @@
   <ion-toolbar>
     <app-language-selectors />
     <ion-buttons slot="end">
+      <ion-button routerLink="/sign-detection">
+        <ion-icon slot="icon-only" name="videocam"></ion-icon>
+      </ion-button>
       <ion-button (click)="toggleTheme()">
         <ion-icon slot="icon-only" [name]="themeIcon()"></ion-icon>
       </ion-button>

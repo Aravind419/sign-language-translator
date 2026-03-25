@@ -11,7 +11,7 @@ import {SpokenToSignedComponent} from '../spoken-to-signed/spoken-to-signed.comp
 import {SignedToSpokenComponent} from '../signed-to-spoken/signed-to-spoken.component';
 import {DropPoseFileComponent} from '../drop-pose-file/drop-pose-file.component';
 import {addIcons} from 'ionicons';
-import {cloudUpload, informationCircleOutline, language, videocam, moon, sunny, contrast} from 'ionicons/icons';
+import {cloudUpload, informationCircleOutline, language, videocam, moon, sunny, contrast, handRight} from 'ionicons/icons';
 import {RouterLink} from '@angular/router';
 import {LogoComponent} from '../../../components/logo/logo.component';
 import {AnnouncementBannerComponent} from '../../../components/announcement-banner/announcement-banner.component';
@@ -57,7 +57,7 @@ export class TranslateDesktopComponent extends BaseComponent implements OnInit {
   constructor() {
     super();
 
-    addIcons({language, videocam, cloudUpload, informationCircleOutline, moon, sunny, contrast});
+    addIcons({language, videocam, cloudUpload, informationCircleOutline, moon, sunny, contrast, handRight});
   }
 
   themeIcon() {

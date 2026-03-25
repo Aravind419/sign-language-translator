@@ -6,6 +6,7 @@ import {SignedLanguageOutputComponent} from '../spoken-to-signed/signed-language
 import {SignedLanguageInputComponent} from '../signed-to-spoken/signed-language-input/signed-language-input.component';
 import {LanguageSelectorsComponent} from '../language-selectors/language-selectors.component';
 import {VideoModule} from '../../../components/video/video.module';
+import {RouterLink} from '@angular/router';
 
 @Component({
   selector: 'app-translate-mobile',
@@ -24,6 +25,7 @@ import {VideoModule} from '../../../components/video/video.module';
     IonButtons,
     IonButton,
     IonIcon,
+    RouterLink,
   ],
 })
 export class TranslateMobileComponent extends TranslateDesktopComponent {}
