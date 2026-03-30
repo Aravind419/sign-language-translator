@@ -37,7 +37,9 @@ validation_data, test_data = rest_data.split(0.5)
 # 3. Set Hyperparameters and Train the Model
 print("Training the Custom ASL Gesture Recognizer...")
 # You can tweak learning rate, batch size, and epochs here
-hparams = gesture_recognizer.HParams(export_dir="exported_model", epochs=10)
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+EXPORT_DIR = os.path.join(SCRIPT_DIR, '..', '..', 'src', 'assets', 'models')
+hparams = gesture_recognizer.HParams(export_dir=EXPORT_DIR, epochs=10)
 options = gesture_recognizer.GestureRecognizerOptions(hparams=hparams)
 
 # Train the model!
@@ -53,10 +55,9 @@ loss, acc = model.evaluate(test_data, batch_size=1)
 print(f"Test loss:{loss}, Test accuracy:{acc}")
 
 # 5. Export the custom .task file
-print("Exporting the model to 'exported_model/gesture_recognizer.task'...")
+print(f"Exporting the model to '{EXPORT_DIR}/gesture_recognizer.task'...")
 model.export_model()
-print("\nSuccess! Your custom AI model is ready.")
+print("\nSuccess! Your custom AI model is ready and injected into the Angular app.")
 print("Next steps:")
-print("1. Copy 'exported_model/gesture_recognizer.task'")
-print("2. Paste it into your Angular app at 'd:/sign-language/translate/src/assets/models/'")
-print("3. Update 'sign-detection.component.ts' to load your custom model.")
+print("1. Restart your Angular server if it was already running.")
+print("2. Navigate to the Sign Detection page and test your custom signs!")

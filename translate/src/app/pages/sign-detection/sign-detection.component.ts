@@ -46,13 +46,64 @@ export class SignDetectionComponent implements OnInit, OnDestroy {
   detectedMeaning = 'Waiting for sign...';
   
   readonly signMapping: Record<string, string> = {
+    // Default model fallback mappings
     'Thumb_Up': 'Good / Yes',
     'Thumb_Down': 'Bad / No',
     'Open_Palm': 'Hello',
     'Closed_Fist': 'Sorry',
     'Victory': 'Peace',
+    'Pointing_Up': 'One',
+    // Custom ASL 50 Signs
+    'Hello': 'Hello',
+    'Goodbye': 'Goodbye',
+    'Yes': 'Yes',
+    'No': 'No',
+    'Please': 'Please',
+    'Thank_You': 'Thank You',
+    'Sorry': 'Sorry',
+    'Help': 'Help',
+    'More': 'More',
+    'All_Done': 'All Done',
+    'Eat': 'Eat',
+    'Drink': 'Drink',
+    'Water': 'Water',
+    'Milk': 'Milk',
+    'Sleep': 'Sleep',
+    'Toilet': 'Toilet',
+    'Play': 'Play',
+    'Stop': 'Stop',
+    'Go': 'Go',
+    'Come': 'Come',
+    'Mother': 'Mother',
+    'Father': 'Father',
+    'Baby': 'Baby',
+    'Friend': 'Friend',
+    'Home': 'Home',
+    'School': 'School',
+    'Work': 'Work',
+    'Book': 'Book',
+    'Cat': 'Cat',
+    'Dog': 'Dog',
+    'Hot': 'Hot',
+    'Cold': 'Cold',
+    'Happy': 'Happy',
+    'Sad': 'Sad',
+    'Angry': 'Angry',
     'ILoveYou': 'I love you',
-    'Pointing_Up': 'One'
+    'Peace': 'Peace',
+    'One': 'One',
+    'Two': 'Two',
+    'Three': 'Three',
+    'Four': 'Four',
+    'Five': 'Five',
+    'Six': 'Six',
+    'Seven': 'Seven',
+    'Eight': 'Eight',
+    'Nine': 'Nine',
+    'Ten': 'Ten',
+    'Good': 'Good',
+    'Bad': 'Bad',
+    'Nice': 'Nice'
   };
 
   speechSynthesis = typeof window !== 'undefined' ? window.speechSynthesis : null;
@@ -87,11 +138,11 @@ export class SignDetectionComponent implements OnInit, OnDestroy {
     );
     this.gestureRecognizer = await GestureRecognizer.createFromOptions(vision, {
       baseOptions: {
-        modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/gesture_recognizer/gesture_recognizer/float16/latest/gesture_recognizer.task',
+        modelAssetPath: 'assets/models/gesture_recognizer.task',
         delegate: 'GPU'
       },
       runningMode: this.runningMode,
-      numHands: 1
+      numHands: 2 // Detect both hands simultaneously
     });
   }
 
@@ -138,7 +189,12 @@ export class SignDetectionComponent implements OnInit, OnDestroy {
       const drawingUtils = new DrawingUtils(canvasCtx);
       
       if (results.landmarks) {
-        for (const landmarks of results.landmarks) {
+        let bestScore = 0;
+        let bestMeaning = '';
+        let detectedClasses: string[] = [];
+        
+        for (let i = 0; i < results.landmarks.length; i++) {
+          const landmarks = results.landmarks[i];
           drawingUtils.drawConnectors(landmarks, GestureRecognizer.HAND_CONNECTIONS, {
             color: "#00FF00",
             lineWidth: 5
@@ -147,24 +203,46 @@ export class SignDetectionComponent implements OnInit, OnDestroy {
             color: "#FF0000",
             lineWidth: 2
           });
-        }
-      }
-      canvasCtx.restore();
-      
-      if (results.gestures.length > 0) {
-        const categoryName = results.gestures[0][0].categoryName;
-        const score = results.gestures[0][0].score;
-        if (score > 0.6 && categoryName !== 'None') {
-          this.detectedSign = categoryName;
-          const meaning = this.signMapping[categoryName] || categoryName;
-          this.detectedMeaning = meaning;
           
-          if (this.lastSpokenMeaning !== meaning) {
-            this.speakAloud(meaning);
-            this.lastSpokenMeaning = meaning;
+          // Draw prediction text over each hand
+          if (results.gestures && results.gestures[i] && results.gestures[i].length > 0) {
+            const categoryName = results.gestures[i][0].categoryName;
+            const score = results.gestures[i][0].score;
+            if (score > 0.6 && categoryName !== 'None') {
+              const meaning = this.signMapping[categoryName] || categoryName.replace(/_/g, ' ');
+              detectedClasses.push(meaning);
+              
+              // Find index finger tip or standard position to anchor text
+              const anchor = landmarks[8] || landmarks[0];
+              canvasCtx.fillStyle = '#00FFFF';
+              canvasCtx.font = 'bold 24px Arial';
+              canvasCtx.fillText(
+                `${meaning} (${(score * 100).toFixed(0)}%)`, 
+                anchor.x * canvas.width - 20, 
+                anchor.y * canvas.height - 20
+              );
+              
+              if (score > bestScore) {
+                bestScore = score;
+                bestMeaning = meaning;
+                this.detectedSign = categoryName;
+              }
+            }
+          }
+        }
+        
+        if (bestScore > 0.6 && bestMeaning) {
+          // Join the detected signs from both hands
+          const combinedMeaning = Array.from(new Set(detectedClasses)).join(' & ');
+          this.detectedMeaning = combinedMeaning;
+          
+          if (this.lastSpokenMeaning !== combinedMeaning) {
+            this.speakAloud(combinedMeaning);
+            this.lastSpokenMeaning = combinedMeaning;
           }
         }
       }
+      canvasCtx.restore();
     }
 
     if (this.webcamRunning) {
